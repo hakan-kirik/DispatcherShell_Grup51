@@ -1,6 +1,3 @@
 public enum Priority {
-	RealTime,
-	Highest,
-	Medium,
-	Lowest;
+	RealTime, Highest, Medium, Lowest;
 }

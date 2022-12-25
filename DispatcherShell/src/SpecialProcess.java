@@ -8,11 +8,11 @@ public class SpecialProcess implements ISpecialProcess {
 	private int destinationTime;
 	private Color color;
 	private Statement statement;
-	
+
 	public SpecialProcess(int pid, Priority priority, int burstTime, int destinationTime) {
-		
+
 	}
-	
+
 	@Override
 	public void decreasePriority() {
 		// TODO Auto-generated method stub
@@ -42,7 +42,7 @@ public class SpecialProcess implements ISpecialProcess {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+
 	@Override
 	public int getDestinationTime() {
 		// TODO Auto-generated method stub
@@ -60,7 +60,7 @@ public class SpecialProcess implements ISpecialProcess {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public void setStatement(Statement statement) {
 		// TODO Auto-generated method stub

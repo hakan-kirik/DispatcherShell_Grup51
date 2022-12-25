@@ -1,7 +1,3 @@
 public enum Statement {
-	New,
-	Ready,
-	Running,
-	Terminated,
-	TimeOut;
+	New, Ready, Running, Terminated, TimeOut;
 }

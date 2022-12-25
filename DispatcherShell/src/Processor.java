@@ -1,9 +1,9 @@
 public class Processor implements IProcessor {
 	private ISpecialProcess currentProcess;
 	private IOutput output;
-	
+
 	public Processor(IOutput output) {
-		
+
 	}
 
 	@Override

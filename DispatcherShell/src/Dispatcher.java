@@ -7,18 +7,18 @@ public class Dispatcher implements IDispatcher {
 	private IProcessQueue mediumQueue;
 	private IProcessQueue lowestQueue;
 	private int currentTime;
-	
+
 	public Dispatcher(IProcessor processor, IProcessReader processReader, IOutput output) throws Exception {
-		
-		if(processor==null)
+
+		if (processor == null)
 			throw new Exception("Dispatcher oluşturulurken processor değişkenine NULL gönderildi!");
-		else if(processReader==null)
+		else if (processReader == null)
 			throw new Exception("Dispatcher oluşturulurken processReader değişkenine NULL gönderildi!");
-		else if(output==null)
+		else if (output == null)
 			throw new Exception("Dispatcher oluşturulurken output değişkenine NULL gönderildi!");
-		
+
 		this.processor = processor;
-		this.processReader = processReader;	
+		this.processReader = processReader;
 		this.output = output;
 		this.currentTime = 0;
 		this.realTimeQueue = new ProcessQueue(Priority.RealTime);
@@ -26,56 +26,56 @@ public class Dispatcher implements IDispatcher {
 		this.mediumQueue = new ProcessQueue(Priority.Medium);
 		this.lowestQueue = new ProcessQueue(Priority.Lowest);
 	}
-	
+
 	private ISpecialProcess getAppropriateProcess() {
-		if(!realTimeQueue.isEmpty())
+		if (!realTimeQueue.isEmpty())
 			return realTimeQueue.dequeue();
-		else if(!highestQueue.isEmpty())
+		else if (!highestQueue.isEmpty())
 			return highestQueue.dequeue();
-		else if(!mediumQueue.isEmpty())
+		else if (!mediumQueue.isEmpty())
 			return mediumQueue.dequeue();
-		else if(!lowestQueue.isEmpty())
+		else if (!lowestQueue.isEmpty())
 			return lowestQueue.dequeue();
-		else 
+		else
 			return null;
 	}
-	
+
 	private void queueProcess(ISpecialProcess process) {
-		if(process.getPriority()==Priority.RealTime)
+		if (process.getPriority() == Priority.RealTime)
 			realTimeQueue.enqueue(process);
-		else if(process.getPriority()==Priority.Highest)
+		else if (process.getPriority() == Priority.Highest)
 			highestQueue.enqueue(process);
-		else if(process.getPriority()==Priority.Medium)
+		else if (process.getPriority() == Priority.Medium)
 			mediumQueue.enqueue(process);
-		else //(process.getPriority()==Priority.Lowest)
+		else // (process.getPriority()==Priority.Lowest)
 			lowestQueue.enqueue(process);
 	}
-	
+
 	private void terminateTimeOut() {
 		Node<ISpecialProcess>[] deletedProcesses;
-		
-		deletedProcesses=realTimeQueue.search(currentTime-20);
+
+		deletedProcesses = realTimeQueue.search(currentTime - 20);
 		for (Node<ISpecialProcess> node : deletedProcesses) {
 			node.data.setStatement(Statement.TimeOut);
 			output.processTimeOut(node.data, currentTime);
 			realTimeQueue.delete(node);
 		}
-		
-		deletedProcesses=highestQueue.search(currentTime-20);
+
+		deletedProcesses = highestQueue.search(currentTime - 20);
 		for (Node<ISpecialProcess> node : deletedProcesses) {
 			node.data.setStatement(Statement.TimeOut);
 			output.processTimeOut(node.data, currentTime);
 			highestQueue.delete(node);
 		}
-		
-		deletedProcesses=mediumQueue.search(currentTime-20);
+
+		deletedProcesses = mediumQueue.search(currentTime - 20);
 		for (Node<ISpecialProcess> node : deletedProcesses) {
 			node.data.setStatement(Statement.TimeOut);
 			output.processTimeOut(node.data, currentTime);
 			mediumQueue.delete(node);
 		}
-		
-		deletedProcesses=lowestQueue.search(currentTime-20);
+
+		deletedProcesses = lowestQueue.search(currentTime - 20);
 		for (Node<ISpecialProcess> node : deletedProcesses) {
 			node.data.setStatement(Statement.TimeOut);
 			output.processTimeOut(node.data, currentTime);
@@ -85,24 +85,24 @@ public class Dispatcher implements IDispatcher {
 
 	@Override
 	public void start() {
-		while(true) {
+		while (true) {
 			terminateTimeOut();
 			IProcessQueue receivedProcesses = processReader.getProcesses(currentTime);
 			ISpecialProcess process;
-			while(!receivedProcesses.isEmpty()) {
-				process=receivedProcesses.dequeue();
+			while (!receivedProcesses.isEmpty()) {
+				process = receivedProcesses.dequeue();
 				process.setStatement(Statement.Ready);
 				queueProcess(process);
 			}
 			process = getAppropriateProcess();
-			
-			if(process==null)
+
+			if (process == null)
 				break;
-			
+
 			process.setStatement(Statement.Running);
 			processor.run(process, currentTime);
-			
-			if(process.getBurstTime()==0)
+
+			if (process.getBurstTime() == 0)
 				process.setStatement(Statement.Terminated);
 			else {
 				process.setStatement(Statement.Ready);

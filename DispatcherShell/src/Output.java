@@ -1,8 +1,8 @@
 public class Output implements IOutput {
 	private IOutput instance;
-	
+
 	private Output() {
-		
+
 	}
 
 	public static IOutput getInstance() {

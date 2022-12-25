@@ -1,12 +1,12 @@
 public class ProcessReader implements IProcessReader {
 	private IProcessQueue Processes;
-	
+
 	public ProcessReader(String path) {
-		
+
 	}
-	
+
 	private void readFile(String path) {
-		
+
 	}
 
 	@Override
