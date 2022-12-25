@@ -1,8 +1,9 @@
-public class Node {
-	public Node front;
-	public ISpecialProcess data;
+public class Node<A> {
+	public Node<A> front;
+	public Node<A> back;
+	public A data;
 	
-	public Node(Node front, ISpecialProcess data){
+	public Node(Node<A> front, Node<A> back, A data){
 		
 	}
 }

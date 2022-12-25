@@ -1,5 +1,5 @@
-public interface IQueue {
-	void enqueue(ISpecialProcess process);
-	ISpecialProcess dequeue();
+public interface IQueue<A> {
+	void enqueue(A data);
+	A dequeue();
 	boolean isEmpty();
 }

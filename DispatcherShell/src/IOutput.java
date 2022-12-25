@@ -1,7 +1,7 @@
 public interface IOutput {
-	void processStart(ISpecialProcess process);
-	void processContinue(ISpecialProcess process);
-	void processInterrupted(ISpecialProcess process);
-	void processTerminated(ISpecialProcess process);
-	void processTimeOut(ISpecialProcess process);
+	void processStart(ISpecialProcess process, int destinationTime);
+	void processContinue(ISpecialProcess process, int destinationTime);
+	void processInterrupted(ISpecialProcess process, int destinationTime);
+	void processTerminated(ISpecialProcess process, int destinationTime);
+	void processTimeOut(ISpecialProcess process, int destinationTime);
 }

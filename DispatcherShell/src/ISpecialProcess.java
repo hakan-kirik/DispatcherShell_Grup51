@@ -6,6 +6,8 @@ public interface ISpecialProcess {
 	int getPid();
 	Priority getPriority();
 	int getBurstTime();
+	int getDestinationTime();
 	Color getColor();
 	Statement getStatement();
+	void setStatement(Statement statement);
 }

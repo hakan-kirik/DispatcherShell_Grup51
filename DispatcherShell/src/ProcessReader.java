@@ -1,5 +1,5 @@
 public class ProcessReader implements IProcessReader {
-	private IQueue Processes;
+	private IProcessQueue Processes;
 	
 	public ProcessReader(String path) {
 		
@@ -10,7 +10,7 @@ public class ProcessReader implements IProcessReader {
 	}
 
 	@Override
-	public IQueue getProcesses(int destinationTime) {
+	public IProcessQueue getProcesses(int destinationTime) {
 		// TODO Auto-generated method stub
 		return null;
 	}

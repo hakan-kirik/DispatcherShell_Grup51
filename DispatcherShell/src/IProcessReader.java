@@ -1,3 +1,3 @@
 public interface IProcessReader {
-	IQueue getProcesses(int destinationTime);
+	IProcessQueue getProcesses(int destinationTime);
 }
