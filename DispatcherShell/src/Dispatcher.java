@@ -52,9 +52,35 @@ public class Dispatcher implements IDispatcher {
 	}
 	
 	private void terminateTimeOut() {
-		Node temp;
+		Node<ISpecialProcess>[] deletedProcesses;
 		
-		//temp=realTimeQueue.getBack();
+		deletedProcesses=realTimeQueue.search(currentTime-20);
+		for (Node<ISpecialProcess> node : deletedProcesses) {
+			node.data.setStatement(Statement.TimeOut);
+			output.processTimeOut(node.data, currentTime);
+			realTimeQueue.delete(node);
+		}
+		
+		deletedProcesses=highestQueue.search(currentTime-20);
+		for (Node<ISpecialProcess> node : deletedProcesses) {
+			node.data.setStatement(Statement.TimeOut);
+			output.processTimeOut(node.data, currentTime);
+			highestQueue.delete(node);
+		}
+		
+		deletedProcesses=mediumQueue.search(currentTime-20);
+		for (Node<ISpecialProcess> node : deletedProcesses) {
+			node.data.setStatement(Statement.TimeOut);
+			output.processTimeOut(node.data, currentTime);
+			mediumQueue.delete(node);
+		}
+		
+		deletedProcesses=lowestQueue.search(currentTime-20);
+		for (Node<ISpecialProcess> node : deletedProcesses) {
+			node.data.setStatement(Statement.TimeOut);
+			output.processTimeOut(node.data, currentTime);
+			lowestQueue.delete(node);
+		}
 	}
 
 	@Override
@@ -62,14 +88,18 @@ public class Dispatcher implements IDispatcher {
 		while(true) {
 			terminateTimeOut();
 			IProcessQueue receivedProcesses = processReader.getProcesses(currentTime);
-			while(!receivedProcesses.isEmpty())
-				queueProcess(receivedProcesses.dequeue());
-			ISpecialProcess process = getAppropriateProcess();
+			ISpecialProcess process;
+			while(!receivedProcesses.isEmpty()) {
+				process=receivedProcesses.dequeue();
+				process.setStatement(Statement.Ready);
+				queueProcess(process);
+			}
+			process = getAppropriateProcess();
 			
 			if(process==null)
 				break;
 			
-			process.setStatement(Statement.Ready);
+			process.setStatement(Statement.Running);
 			processor.run(process, currentTime);
 			
 			if(process.getBurstTime()==0)

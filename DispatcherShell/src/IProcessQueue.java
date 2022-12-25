@@ -1,4 +1,4 @@
 public interface IProcessQueue extends IQueue<ISpecialProcess> {
-	Node<SpecialProcess>[] search(int destinationTime);
-	void delete(Node<SpecialProcess> process);
+	Node<ISpecialProcess>[] search(int destinationTime);
+	void delete(Node<ISpecialProcess> process);
 }
