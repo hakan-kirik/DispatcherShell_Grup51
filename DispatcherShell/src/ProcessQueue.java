@@ -46,14 +46,14 @@ public class ProcessQueue implements IProcessQueue {
 	}
 
 	@Override
-	public Node<ISpecialProcess>[] search(int destinationTime) {
+	public ISpecialProcess[] search(int destinationTime) {
 		// TODO Auto-generated method stub
 		
 		return null;
 	}
 
 	@Override
-	public void delete(Node<ISpecialProcess> process) {
+	public void delete(ISpecialProcess process) {
 		// TODO Auto-generated method stub
 
 	}

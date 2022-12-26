@@ -4,14 +4,16 @@ public interface ISpecialProcess {
 	void decreasePriority();
 
 	void decreaseBurstTime();
+	
+	boolean increaseWaitingTime();
+	
+	void resetWaitingTime();
 
 	int getPid();
 
 	Priority getPriority();
 
 	int getBurstTime();
-
-	int getDestinationTime();
 
 	Color getColor();
 

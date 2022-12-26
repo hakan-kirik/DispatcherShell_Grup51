@@ -5,11 +5,11 @@ public class SpecialProcess implements ISpecialProcess {
 	private int pid;
 	private Priority priority;
 	private int burstTime;
-	private int destinationTime;
+	private int waitingTime;
 	private Color color;
 	private Statement statement;
 
-	public SpecialProcess(int pid, Priority priority, int burstTime, int destinationTime) {
+	public SpecialProcess(int pid, Priority priority, int burstTime) {
 
 	}
 
@@ -26,6 +26,18 @@ public class SpecialProcess implements ISpecialProcess {
 	}
 
 	@Override
+	public boolean increaseWaitingTime() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void resetWaitingTime() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public int getPid() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -39,12 +51,6 @@ public class SpecialProcess implements ISpecialProcess {
 
 	@Override
 	public int getBurstTime() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getDestinationTime() {
 		// TODO Auto-generated method stub
 		return 0;
 	}

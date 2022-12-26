@@ -1,25 +1,21 @@
 public class Dispatcher implements IDispatcher {
 	private IProcessor processor;
 	private IProcessReader processReader;
-	private IOutput output;
 	private IProcessQueue realTimeQueue;
 	private IProcessQueue highestQueue;
 	private IProcessQueue mediumQueue;
 	private IProcessQueue lowestQueue;
 	private int currentTime;
 
-	public Dispatcher(IProcessor processor, IProcessReader processReader, IOutput output) throws Exception {
+	public Dispatcher(IProcessor processor, IProcessReader processReader) throws Exception {
 
 		if (processor == null)
 			throw new Exception("Dispatcher oluşturulurken processor değişkenine NULL gönderildi!");
 		else if (processReader == null)
 			throw new Exception("Dispatcher oluşturulurken processReader değişkenine NULL gönderildi!");
-		else if (output == null)
-			throw new Exception("Dispatcher oluşturulurken output değişkenine NULL gönderildi!");
 
 		this.processor = processor;
 		this.processReader = processReader;
-		this.output = output;
 		this.currentTime = 0;
 		this.realTimeQueue = new ProcessQueue(Priority.RealTime);
 		this.highestQueue = new ProcessQueue(Priority.Highest);
@@ -52,34 +48,34 @@ public class Dispatcher implements IDispatcher {
 	}
 
 	private void terminateTimeOut() {
-		Node<ISpecialProcess>[] deletedProcesses;
+		ISpecialProcess[] deletedProcesses;
 
 		deletedProcesses = realTimeQueue.search(currentTime - 20);
-		for (Node<ISpecialProcess> node : deletedProcesses) {
-			node.data.setStatement(Statement.TimeOut);
-			output.processTimeOut(node.data, currentTime);
-			realTimeQueue.delete(node);
+		for (var process : deletedProcesses) {
+			process.setStatement(Statement.TimeOut);
+			System.out.println(currentTime + " sn proses zaman aşımı	(id: " + "	öncelik:" + "	kalan süre:" + " sn)");
+			realTimeQueue.delete(process);
 		}
 
 		deletedProcesses = highestQueue.search(currentTime - 20);
-		for (Node<ISpecialProcess> node : deletedProcesses) {
-			node.data.setStatement(Statement.TimeOut);
-			output.processTimeOut(node.data, currentTime);
-			highestQueue.delete(node);
+		for (var process : deletedProcesses) {
+			process.setStatement(Statement.TimeOut);
+			System.out.println(currentTime + " sn proses zaman aşımı	(id: " + "	öncelik:" + "	kalan süre:" + " sn)");
+			highestQueue.delete(process);
 		}
 
 		deletedProcesses = mediumQueue.search(currentTime - 20);
-		for (Node<ISpecialProcess> node : deletedProcesses) {
-			node.data.setStatement(Statement.TimeOut);
-			output.processTimeOut(node.data, currentTime);
-			mediumQueue.delete(node);
+		for (var process : deletedProcesses) {
+			process.setStatement(Statement.TimeOut);
+			System.out.println(currentTime + " sn proses zaman aşımı	(id: " + "	öncelik:" + "	kalan süre:" + " sn)");
+			mediumQueue.delete(process);
 		}
 
 		deletedProcesses = lowestQueue.search(currentTime - 20);
-		for (Node<ISpecialProcess> node : deletedProcesses) {
-			node.data.setStatement(Statement.TimeOut);
-			output.processTimeOut(node.data, currentTime);
-			lowestQueue.delete(node);
+		for (var process : deletedProcesses) {
+			process.setStatement(Statement.TimeOut);
+			System.out.println(currentTime + " sn proses zaman aşımı	(id: " + "	öncelik:" + "	kalan süre:" + " sn)");
+			lowestQueue.delete(process);
 		}
 	}
 
