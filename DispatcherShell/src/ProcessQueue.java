@@ -4,7 +4,9 @@ public class ProcessQueue implements IProcessQueue {
 	private Priority priority;
 
 	public ProcessQueue(Priority priority) {
+		
 		front = back = null;
+		
 	}
 
 	@Override
@@ -14,10 +16,12 @@ public class ProcessQueue implements IProcessQueue {
 		Node<ISpecialProcess> tmp = new Node<ISpecialProcess>(data);
 		if(isEmpty()){
 			front = back = tmp;
+			
 		}
 		else{
 			back.next = tmp;
 			back = back.next;
+			
 		}
 
 	}
@@ -37,12 +41,14 @@ public class ProcessQueue implements IProcessQueue {
 	@Override
 	public boolean isEmpty() {
 		// TODO Auto-generated method stub
+		
 		return front == null;
 	}
 
 	@Override
 	public Node<ISpecialProcess>[] search(int destinationTime) {
 		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
