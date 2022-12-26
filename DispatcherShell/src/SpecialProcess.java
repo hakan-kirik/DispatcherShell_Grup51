@@ -10,72 +10,84 @@ public class SpecialProcess implements ISpecialProcess {
 	private Statement statement;
 
 	public SpecialProcess(int pid, Priority priority, int burstTime) {
-
+		this.pid=pid;
+		this.priority=priority;
+		this.burstTime=burstTime;
+		this.waitingTime=0;
+		this.color=Colors.getInstance().getColor(pid);
+		process=new ProcessBuilder("java","-jar","./Process.jar",String.valueOf(pid));
+		
 	}
 
 	@Override
 	public void decreasePriority() {
-		// TODO Auto-generated method stub
+		if(this.priority==Priority.Highest) {
+			this.priority=Priority.Medium;
+		}else if(this.priority==Priority.Medium) {
+			this.priority=Priority.Lowest;
+		}else if(this.priority==Priority.RealTime) {
+			this.priority=Priority.Highest;
+		}
 
 	}
 
 	@Override
 	public void decreaseBurstTime() {
-		// TODO Auto-generated method stub
+		this.burstTime--;
 
 	}
 
 	@Override
 	public boolean increaseWaitingTime() {
-		// TODO Auto-generated method stub
-		return false;
+		this.waitingTime++;
+		return this.waitingTime>20 ?  false : true;
+		
 	}
 
 	@Override
 	public void resetWaitingTime() {
-		// TODO Auto-generated method stub
+		this.burstTime=0;
 		
 	}
 
 	@Override
 	public int getPid() {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return this.pid;
 	}
 
 	@Override
 	public Priority getPriority() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return this.priority;
 	}
 
 	@Override
 	public int getBurstTime() {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return this.burstTime;
 	}
 
 	@Override
 	public ProcessBuilder getProcessBuilder() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return this.process;
 	}
 
 	@Override
 	public Color getColor() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.color;
 	}
 
 	@Override
 	public Statement getStatement() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return this.statement;
 	}
 
 	@Override
 	public void setStatement(Statement statement) {
-		// TODO Auto-generated method stub
+		this.statement=statement;
 
 	}
 

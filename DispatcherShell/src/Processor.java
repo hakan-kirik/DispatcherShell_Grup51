@@ -11,6 +11,7 @@ public class Processor implements IProcessor {
 	private void runProcess(ISpecialProcess process, int currentTime, String message) {
 	try {
 		ProcessBuilder pb = process.getProcessBuilder();
+		pb.command(process.getPriority().toString());
 		pb.command().add(message);
 		Process p = pb.start();
 		BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -18,6 +19,7 @@ public class Processor implements IProcessor {
 		while((s = in.readLine()) != null){
 		    System.out.println(s);
 		}
+		pb.command().remove(pb.command().size()-1);
 		pb.command().remove(pb.command().size()-1);
 		p.destroyForcibly();
 	} catch (Exception e) {
@@ -27,7 +29,7 @@ public class Processor implements IProcessor {
 
 	@Override
 	public void run(ISpecialProcess process, int currentTime) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
