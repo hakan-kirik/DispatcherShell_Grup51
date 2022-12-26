@@ -11,6 +11,7 @@ public class Processor implements IProcessor {
 	private void runProcess(ISpecialProcess process, int currentTime, String message) {
 	try {
 		ProcessBuilder pb = process.getProcessBuilder();
+		pb.command(String.valueOf(currentTime));
 		pb.command(process.getPriority().toString());
 		pb.command().add(message);
 		Process p = pb.start();
@@ -21,6 +22,7 @@ public class Processor implements IProcessor {
 		}
 		pb.command().remove(pb.command().size()-1);
 		pb.command().remove(pb.command().size()-1);
+		pb.command().remove(pb.command().size()-1);
 		p.destroyForcibly();
 	} catch (Exception e) {
 		// TODO: handle exception
@@ -29,7 +31,18 @@ public class Processor implements IProcessor {
 
 	@Override
 	public void run(ISpecialProcess process, int currentTime) {
-		
+			if(this.currentProcess!=process) {
+				if(currentProcess.getStatement()==Statement.Terminated) {
+					System.out.println("currentprocess sonlandi");//bu ifade gecici olarak yazildi
+					this.runProcess(process, currentTime, "Process basladi");
+				}else {
+					System.out.println("currentprocess askiya alındi");//bu ifade gecici olarak yazildi
+					this.runProcess(process, currentTime,"Process basladi");
+					
+				}
+			}else {
+				this.runProcess(process, currentTime, "Yürütülüyor");
+			}
 
 	}
 
