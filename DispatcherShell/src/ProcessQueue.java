@@ -4,25 +4,40 @@ public class ProcessQueue implements IProcessQueue {
 	private Priority priority;
 
 	public ProcessQueue(Priority priority) {
-
+		front = back = null;
 	}
 
 	@Override
 	public void enqueue(ISpecialProcess data) {
 		// TODO Auto-generated method stub
+		
+		Node<ISpecialProcess> tmp = new Node<ISpecialProcess>(data);
+		if(isEmpty()){
+			front = back = tmp;
+		}
+		else{
+			back.next = tmp;
+			back = back.next;
+		}
 
 	}
 
 	@Override
 	public ISpecialProcess dequeue() {
 		// TODO Auto-generated method stub
-		return null;
+		if(!isEmpty()){
+			front = front.next;
+		}
+		else if(front==null){
+			back = null;
+		}
+		return front.data;
 	}
 
 	@Override
 	public boolean isEmpty() {
 		// TODO Auto-generated method stub
-		return false;
+		return front == null;
 	}
 
 	@Override
