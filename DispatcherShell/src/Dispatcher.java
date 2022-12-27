@@ -1,3 +1,10 @@
+// Başlık:		Dispatcher
+// Açıklama:	Görevlendiriciyi simüle eden sınıf
+// Ders Adı:	İşletim Sistemleri
+// Konu:		Görevlendirici Kabuğu Proje Ödevi
+// Grup:		51
+// Öğrenciler:	Hakan Kırık(B201210370) - Yasin Emin Esen(B211210386) - Apltekin Ocakdan(G181210385) - Kemal Güvenç(B181210076)
+
 public class Dispatcher implements IDispatcher {
 	private IProcessor processor;
 	private IProcessReader processReader;
@@ -7,25 +14,20 @@ public class Dispatcher implements IDispatcher {
 	private IProcessQueue lowestQueue;
 	private int currentTime;
 
-	public Dispatcher(IProcessor processor, IProcessReader processReader) throws Exception {
-
-		if (processor == null)
-			throw new Exception("Dispatcher oluşturulurken processor değişkenine NULL gönderildi!");
-		else if (processReader == null)
-			throw new Exception("Dispatcher oluşturulurken processReader değişkenine NULL gönderildi!");
-
+	public Dispatcher(IProcessor processor, IProcessReader processReader) {
 		this.processor = processor;
 		this.processReader = processReader;
 		this.currentTime = 0;
-		this.realTimeQueue = new ProcessQueue(Priority.RealTime);
-		this.highestQueue = new ProcessQueue(Priority.Highest);
-		this.mediumQueue = new ProcessQueue(Priority.Medium);
-		this.lowestQueue = new ProcessQueue(Priority.Lowest);
+		this.realTimeQueue = new ProcessQueue();
+		this.highestQueue = new ProcessQueue();
+		this.mediumQueue = new ProcessQueue();
+		this.lowestQueue = new ProcessQueue();
 	}
 
+	// Önceliği en yüksek olan prosesi döndürür.
 	private ISpecialProcess getAppropriateProcess() {
 		if (!realTimeQueue.isEmpty())
-			return realTimeQueue.dequeue();
+			return realTimeQueue.getFirstItem();
 		else if (!highestQueue.isEmpty())
 			return highestQueue.dequeue();
 		else if (!mediumQueue.isEmpty())
@@ -36,6 +38,7 @@ public class Dispatcher implements IDispatcher {
 			return null;
 	}
 
+	// Verilen prosesi kendisine uygun olan kuyruğa yerleştirir.
 	private void queueProcess(ISpecialProcess process) {
 		if (process.getPriority() == Priority.RealTime)
 			realTimeQueue.enqueue(process);
@@ -47,42 +50,46 @@ public class Dispatcher implements IDispatcher {
 			lowestQueue.enqueue(process);
 	}
 
+	// Bütün kuyrukları gezip 20 saniye bekleme süresini aşan prosesleri
+	// sonlandırır.
 	private void terminateTimeOut() {
-		ISpecialProcess[] deletedProcesses;
+		IProcessQueue deletedProcesses;
 
-		deletedProcesses = realTimeQueue.search(currentTime - 20);
-		for (var process : deletedProcesses) {
+		/*
+		 * deletedProcesses = this.realTimeQueue.increaseWaitingTime();
+		 * while(!deletedProcesses.isEmpty()) { var process =
+		 * deletedProcesses.dequeue(); process.setStatement(Statement.TimeOut);
+		 * processor.run(process, currentTime); realTimeQueue.delete(process); }
+		 */
+
+		deletedProcesses = this.highestQueue.increaseWaitingTime();
+		while (!deletedProcesses.isEmpty()) {
+			var process = deletedProcesses.dequeue();
 			process.setStatement(Statement.TimeOut);
-			System.out.println(currentTime + " sn proses zaman aşımı	(id: " + "	öncelik:" + "	kalan süre:" + " sn)");
-			realTimeQueue.delete(process);
+			processor.run(process, currentTime);
+			this.highestQueue.delete(process);
 		}
 
-		deletedProcesses = highestQueue.search(currentTime - 20);
-		for (var process : deletedProcesses) {
+		deletedProcesses = this.mediumQueue.increaseWaitingTime();
+		while (!deletedProcesses.isEmpty()) {
+			var process = deletedProcesses.dequeue();
 			process.setStatement(Statement.TimeOut);
-			System.out.println(currentTime + " sn proses zaman aşımı	(id: " + "	öncelik:" + "	kalan süre:" + " sn)");
-			highestQueue.delete(process);
+			processor.run(process, currentTime);
+			this.mediumQueue.delete(process);
 		}
 
-		deletedProcesses = mediumQueue.search(currentTime - 20);
-		for (var process : deletedProcesses) {
+		deletedProcesses = this.lowestQueue.increaseWaitingTime();
+		while (!deletedProcesses.isEmpty()) {
+			var process = deletedProcesses.dequeue();
 			process.setStatement(Statement.TimeOut);
-			System.out.println(currentTime + " sn proses zaman aşımı	(id: " + "	öncelik:" + "	kalan süre:" + " sn)");
-			mediumQueue.delete(process);
-		}
-
-		deletedProcesses = lowestQueue.search(currentTime - 20);
-		for (var process : deletedProcesses) {
-			process.setStatement(Statement.TimeOut);
-			System.out.println(currentTime + " sn proses zaman aşımı	(id: " + "	öncelik:" + "	kalan süre:" + " sn)");
-			lowestQueue.delete(process);
+			processor.run(process, currentTime);
+			this.lowestQueue.delete(process);
 		}
 	}
 
 	@Override
 	public void start() {
 		while (true) {
-			terminateTimeOut();
 			IProcessQueue receivedProcesses = processReader.getProcesses(currentTime);
 			ISpecialProcess process;
 			while (!receivedProcesses.isEmpty()) {
@@ -97,14 +104,20 @@ public class Dispatcher implements IDispatcher {
 
 			process.setStatement(Statement.Running);
 			processor.run(process, currentTime);
+			++this.currentTime;
+			terminateTimeOut();
+			process.resetWaitingTime();
+			process.decreasePriority();
 
-			if (process.getBurstTime() == 0)
+			if (process.getBurstTime() == 0) {
+				if (process.getPriority() == Priority.RealTime)
+					realTimeQueue.dequeue();
 				process.setStatement(Statement.Terminated);
-			else {
+			} else {
 				process.setStatement(Statement.Ready);
-				queueProcess(process);
+				if (process.getPriority() != Priority.RealTime)
+					queueProcess(process);
 			}
-			++currentTime;
 		}
 		System.out.println("\nBütün prosesler listelendi.");
 	}

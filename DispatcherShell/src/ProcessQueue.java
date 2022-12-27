@@ -1,88 +1,102 @@
-import java.util.LinkedList;
-import java.util.List;
+// Başlık:		ProcessQueue
+// Açıklama:	Proseslerin saklandığı kuyruk yapısı
+// Ders Adı:	İşletim Sistemleri
+// Konu:		Görevlendirici Kabuğu Proje Ödevi
+// Grup:		51
+// Öğrenciler:	Hakan Kırık(B201210370) - Yasin Emin Esen(B211210386) - Apltekin Ocakdan(G181210385) - Kemal Güvenç(B181210076)
 
 public class ProcessQueue implements IProcessQueue {
 	private Node<ISpecialProcess> front;
 	private Node<ISpecialProcess> back;
-	private Priority priority;
 
-	public ProcessQueue(Priority priority) {
-
+	public ProcessQueue() {
 		front = back = null;
-
 	}
 
 	@Override
 	public void enqueue(ISpecialProcess data) {
-		// TODO Auto-generated method stub
-
 		Node<ISpecialProcess> tmp = new Node<ISpecialProcess>(data);
 		if (isEmpty()) {
 			front = back = tmp;
-
 		} else {
-			back.next = tmp;
-			back = back.next;
-
+			tmp.next = back;
+			back.prev = tmp;
+			back = tmp;
 		}
-
 	}
 
 	@Override
 	public ISpecialProcess dequeue() {
-		// TODO Auto-generated method stub
 		if (!isEmpty()) {
-			front = front.next;
-		} else if (front == null) {
-			back = null;
+			var deletedNode = front;
+			front = front.prev;
+			if (front != null)
+				front.next = null;
+			else
+				back = null;
+			return deletedNode.data;
+		} else {
+			return null;
 		}
-		return front.data;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-
 		return front == null;
 	}
 
 	@Override
-	public ISpecialProcess[] increaseWaitingTime(int waitingTime) {
-		// TODO Auto-generated method stub
-		Node<ISpecialProcess> tmp = front;
-		List<ISpecialProcess> list = new LinkedList<ISpecialProcess>();
+	public ISpecialProcess getFirstItem() {
+		return this.front.data;
+	}
 
-		while(tmp !=null){
-			if(tmp.data.increaseWaitingTime()){
-				list.add(tmp.data);
+	// Kuyruktaki tüm proseslerin bekleme zamanını 1 artırır. Bekleme süresi 20
+	// saniyeyi aşan prosesleri döndürür.
+	@Override
+	public IProcessQueue increaseWaitingTime() {
+		IProcessQueue timeOutProcesses = new ProcessQueue();
+		Node<ISpecialProcess> processNode = front;
+
+		while (processNode != null) {
+			if (processNode.data.increaseWaitingTime()) {
+				timeOutProcesses.enqueue(processNode.data);
 			}
-			tmp = tmp.next;
+			processNode = processNode.prev;
 		}
 
-		ISpecialProcess[] arr = (ISpecialProcess[]) list.toArray();
-		
-		return arr;
+		return timeOutProcesses;
+	}
+
+	@Override
+	public IProcessQueue search(int destinationTime) {
+		IProcessQueue foundedProcesses = new ProcessQueue();
+		Node<ISpecialProcess> processNode = front;
+		while (processNode.data.getDestinationTime() <= destinationTime) {
+			if (processNode.data.getDestinationTime() == destinationTime)
+				foundedProcesses.enqueue(processNode.data);
+			processNode = processNode.prev;
+			if (processNode == null)
+				break;
+		}
+		return foundedProcesses;
 	}
 
 	@Override
 	public void delete(ISpecialProcess process) {
-		// TODO Auto-generated method stub
-		Node<ISpecialProcess> del;
-		del = front;
-		while (del.data != process) {
-			del = del.next;
-			if (del == null)
+		Node<ISpecialProcess> deletedNode = front;
+		while (deletedNode.data != process) {
+			deletedNode = deletedNode.prev;
+			if (deletedNode == null)
 				return;
 		}
-		if (del == front)
-			front = front.next;
 
-		else
-			del.prev.next = del.next;
-
-		if (del == back)
-			back = del.prev;
-		else
-			del.prev.next = del.prev;
+		if (deletedNode == front)
+			front = front.prev;
+		else if (deletedNode == back)
+			back = back.prev;
+		else {
+			deletedNode.prev.next = deletedNode.next;
+			deletedNode.next.prev = deletedNode.prev;
+		}
 	}
 }
