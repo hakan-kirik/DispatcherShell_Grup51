@@ -56,6 +56,12 @@ public class SpecialProcess implements ISpecialProcess {
 	}
 
 	@Override
+	public ProcessBuilder getProcessBuilder() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public Color getColor() {
 		// TODO Auto-generated method stub
 		return null;

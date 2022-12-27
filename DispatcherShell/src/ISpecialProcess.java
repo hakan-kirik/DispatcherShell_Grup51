@@ -14,6 +14,8 @@ public interface ISpecialProcess {
 	Priority getPriority();
 
 	int getBurstTime();
+	
+	ProcessBuilder getProcessBuilder();
 
 	Color getColor();
 
