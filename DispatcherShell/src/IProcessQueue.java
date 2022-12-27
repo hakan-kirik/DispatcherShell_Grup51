@@ -1,5 +1,5 @@
 public interface IProcessQueue extends IQueue<ISpecialProcess> {
-	ISpecialProcess[] search(int destinationTime);
+	ISpecialProcess[] increaseWaitingTime(int waitingTime);
 
 	void delete(ISpecialProcess process);
 }
