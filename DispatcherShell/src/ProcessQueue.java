@@ -14,8 +14,8 @@ public class ProcessQueue implements IProcessQueue {
 	}
 
 	@Override
-	public void enqueue(ISpecialProcess data) {
-		Node<ISpecialProcess> tmp = new Node<ISpecialProcess>(data);
+	public void enqueue(ISpecialProcess process) {
+		Node<ISpecialProcess> tmp = new Node<ISpecialProcess>(process);
 		if (isEmpty()) {
 			front = back = tmp;
 		} else {
