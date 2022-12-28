@@ -42,11 +42,20 @@ public class Processor implements IProcessor {
 	// Gönderilen prosesi çalıştırır.
 	@Override
 	public void run(ISpecialProcess process, int currentTime) {
+		// Kuyrukta ve gelecek olan bütün prosesler bittiğinde en son çalışan prosesin
+		// bittiğini göstermek için
+		if (process == null && this.currentProcess.getStatement() == Statement.Terminated) {
+			this.runProcess(this.currentProcess, currentTime, "sonlandi");
+			return;
+		}
+
+		// Zaman aşımına uğrayan prosesleri ekrana çıkarmak için
 		if (process.getStatement() == Statement.TimeOut) {
 			this.runProcess(process, currentTime, "zamanasimi");
 			return;
 		}
 
+		// İşlemci ilk defa çalıştığı zaman için
 		if (this.currentProcess == null) {
 			this.currentProcess = process;
 			this.runProcess(this.currentProcess, currentTime, "basladi");

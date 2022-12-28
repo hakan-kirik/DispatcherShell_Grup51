@@ -55,13 +55,6 @@ public class Dispatcher implements IDispatcher {
 	private void terminateTimeOut() {
 		IProcessQueue deletedProcesses;
 
-		/*
-		 * deletedProcesses = this.realTimeQueue.increaseWaitingTime();
-		 * while(!deletedProcesses.isEmpty()) { var process =
-		 * deletedProcesses.dequeue(); process.setStatement(Statement.TimeOut);
-		 * processor.run(process, currentTime); realTimeQueue.delete(process); }
-		 */
-
 		deletedProcesses = this.highestQueue.increaseWaitingTime();
 		while (!deletedProcesses.isEmpty()) {
 			var process = deletedProcesses.dequeue();
@@ -92,15 +85,28 @@ public class Dispatcher implements IDispatcher {
 		while (true) {
 			IProcessQueue receivedProcesses = processReader.getProcesses(currentTime);
 			ISpecialProcess process;
+
+			// Yeni proses gelmiş mi diye kontrol ediyor.
 			while (!receivedProcesses.isEmpty()) {
 				process = receivedProcesses.dequeue();
 				process.setStatement(Statement.Ready);
 				queueProcess(process);
 			}
+
+			// Kuyruklarda uygun olan prosesi alır.
 			process = getAppropriateProcess();
 
+			// Kuyruklarda proses olmadığım zamanlar için
 			if (process == null)
-				break;
+				// Hem kuyruklarda hem de gelecek başka proses olmadığı zaman için
+				if (processReader.isEmpty()) {
+					this.processor.run(null, currentTime);
+					break;
+				} else {
+					++this.currentTime;
+					terminateTimeOut();
+					continue;
+				}
 
 			process.setStatement(Statement.Running);
 			processor.run(process, currentTime);

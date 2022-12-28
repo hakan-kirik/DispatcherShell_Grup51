@@ -70,6 +70,8 @@ public class ProcessQueue implements IProcessQueue {
 	@Override
 	public IProcessQueue search(int destinationTime) {
 		IProcessQueue foundedProcesses = new ProcessQueue();
+		if (this.isEmpty())
+			return foundedProcesses;
 		Node<ISpecialProcess> processNode = front;
 		while (processNode.data.getDestinationTime() <= destinationTime) {
 			if (processNode.data.getDestinationTime() == destinationTime)

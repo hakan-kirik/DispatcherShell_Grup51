@@ -54,10 +54,24 @@ public class ProcessReader implements IProcessReader {
 		}
 	}
 
-	// Verilen varış zamanında gelen prosesleri döndürür.
+	// Verilen varış zamanında gelen prosesleri döndürür. Ayrıca prosesleri içindeki
+	// kuyruktan çıkarır.
 	@Override
 	public IProcessQueue getProcesses(int destinationTime) {
-		return this.processes.search(destinationTime);
+		IProcessQueue foundedProcesses = new ProcessQueue();
+		IProcessQueue tmpQueue = this.processes.search(destinationTime);
+		ISpecialProcess tmpProcess;
+		while (!tmpQueue.isEmpty()) {
+			tmpProcess = tmpQueue.dequeue();
+			this.processes.delete(tmpProcess);
+			foundedProcesses.enqueue(tmpProcess);
+		}
+		return foundedProcesses;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return processes.isEmpty();
 	}
 
 }
